@@ -16,3 +16,6 @@
 $router->get('/', function () use ($router) {
     return $router->app->version();
 });
+
+$router->get('/checklist','ChecklistController@index');
+$router->post('/checklist','ChecklistController@store');

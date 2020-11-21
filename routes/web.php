@@ -19,3 +19,6 @@ $router->get('/', function () use ($router) {
 
 $router->get('/checklist','ChecklistController@index');
 $router->post('/checklist','ChecklistController@store');
+$router->get('/checklist/{id}','ChecklistController@show');
+$router->patch('/checklist/{id}','ChecklistController@edit');
+$router->delete('/checklist/{id}','ChecklistController@remove');

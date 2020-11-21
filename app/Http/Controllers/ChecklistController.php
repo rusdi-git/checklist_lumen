@@ -5,7 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
-use function PHPUnit\Framework\isEmpty;
+use App\Models\Checklist;
+use App\Http\Transformers\ChecklistTransformer;
 
 class ChecklistController extends Controller {
     /**
@@ -20,14 +21,14 @@ class ChecklistController extends Controller {
 
     //
     public function index() {
-        $data = array('description'=>'This is checklist');
-        return $this->get_response($data);
+        $data = Checklist::all();
+        return $this->collection($data,new ChecklistTransformer());
     }
 
     public function store(Request $request) {
         $data = $request->json()->get('data')['attributes'];
         $validator = Validator::make(
-            $request->json()->get('data')['attributes'],
+            $data,
             [
                 'object_domain'=>'string|required|',
                 'object_id'=>'integer|required',
@@ -44,7 +45,58 @@ class ChecklistController extends Controller {
                 $data['items'] = array_map('strval',$data['items']);
             }
         }
-        return $this->get_response($data);
+
+        $checklist = new Checklist();
+        $checklist->object_domain = $data['object_domain'];
+        $checklist->object_id = $data['object_id'];
+        $checklist->description = $data['description'];
+        $checklist->due = $data['due'];
+        $checklist->urgency = $data['urgency'];
+        $checklist->task_id = $data['task_id'];
+        $checklist->save();
+
+        return $this->item($checklist,new ChecklistTransformer());
+    }
+
+    public function show($id) {
+        $data = Checklist::find($id);
+        return $this->item($data,new ChecklistTransformer());
+    }
+
+    public function edit($id, Request $request) {
+        $data = $request->json()->get('data')['attributes'];
+        $validator = Validator::make(
+            $data,
+            [
+                'object_domain'=>'string|',
+                'object_id'=>'integer',
+                'description'=>'string',
+                'urgency'=>'nullable|integer',
+                'due'=>'nullable|date',
+                'task_id'=>'string',
+                ]
+        );
+        if($validator->fails()) {
+            return $this->respondWithErrorMessage($validator);
+        } else {
+            if(!empty($data['items'])) {
+                $data['items'] = array_map('strval',$data['items']);
+            }
+        }
+
+        $checklist = Checklist::find($id);
+        foreach($data as $key=>$value) {
+            $checklist->$key = $value;
+        }
+        $checklist->update();
+
+        return $this->item($checklist,new ChecklistTransformer());
+    }
+
+    public function remove($id) {
+        $checklist = Checklist::find($id);
+        $checklist->delete();
+        return $this->get_response(['result'=>'Checklist has been deleted']);
     }
 }
 

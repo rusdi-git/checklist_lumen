@@ -17,8 +17,8 @@ $router->get('/', function () use ($router) {
     return $router->app->version();
 });
 
-$router->get('/checklist','ChecklistController@index');
-$router->post('/checklist','ChecklistController@store');
-$router->get('/checklist/{id}','ChecklistController@show');
-$router->patch('/checklist/{id}','ChecklistController@edit');
-$router->delete('/checklist/{id}','ChecklistController@remove');
+$router->get('/checklists','ChecklistController@index');
+$router->post('/checklists','ChecklistController@store');
+$router->get('/checklists/{id}','ChecklistController@show');
+$router->patch('/checklists/{id}','ChecklistController@edit');
+$router->delete('/checklists/{id}','ChecklistController@remove');

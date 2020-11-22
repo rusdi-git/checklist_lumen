@@ -14,7 +14,7 @@ class ChecklistTransformer  extends Transformer
             'object_id'=>$post->object_id,
             'task_id'=>$post->task_id,
             'description'=>$post->description,
-            'is_completed'=>$post->is_completed,
+            'is_completed'=>(bool)$post->is_completed,
             'due'=>$post->due,
             'urgency'=>$post->urgency,
             'completed_at'=>$post->completed_at,

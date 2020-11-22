@@ -55,11 +55,14 @@ class ChecklistController extends Controller {
         $checklist->task_id = $data['task_id'];
         $checklist->save();
 
-        return $this->item($checklist,new ChecklistTransformer());
+        return $this->item($checklist,new ChecklistTransformer(),201);
     }
 
     public function show($id) {
         $data = Checklist::find($id);
+        if(!$data) {
+            abort(404,'Checklist not found.');
+        }
         return $this->item($data,new ChecklistTransformer());
     }
 
@@ -85,8 +88,11 @@ class ChecklistController extends Controller {
         }
 
         $checklist = Checklist::find($id);
+        $fields = ['object_domain','object_id','description','urgency','due','task_id'];
         foreach($data as $key=>$value) {
-            $checklist->$key = $value;
+            if(in_array($key,$fields)) {
+                $checklist->$key = $value;
+            }
         }
         $checklist->update();
 
@@ -96,7 +102,7 @@ class ChecklistController extends Controller {
     public function remove($id) {
         $checklist = Checklist::find($id);
         $checklist->delete();
-        return $this->get_response(['result'=>'Checklist has been deleted']);
+        return $this->get_response(['result'=>'Checklist has been deleted'],204);
     }
 }
 

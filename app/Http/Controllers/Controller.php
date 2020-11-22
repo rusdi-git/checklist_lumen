@@ -13,10 +13,9 @@ use League\Fractal\Serializer\JsonApiSerializer;
 
 class Controller extends BaseController
 {
-    public function get_response($data)
+    public function get_response($data,$status=200)
     {
-        $content = array('data'=>$data);
-        return response($content);
+        return response()->json($data,$status);
     }
 
     /**
@@ -84,11 +83,12 @@ class Controller extends BaseController
         return $manager;
     }
 
-    public function item($data, $transformer)
+    public function item($data, $transformer,$status=200)
     {
         $manager = $this->getFractalManager();
         $resource = new Item($data, $transformer, $transformer->type);
-        return $manager->createData($resource)->toArray();
+        $data = $manager->createData($resource)->toArray();
+        return $this->get_response($data,$status);
     }
 
     public function collection($data, $transformer)

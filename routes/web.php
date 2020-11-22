@@ -30,3 +30,6 @@ $router->post('/checklists/{checklistid}/items','ItemController@store');
 $router->get('/checklists/{checklistid}/items/{itemid}','ItemController@show');
 $router->patch('/checklists/{checklistid}/items/{itemid}','ItemController@edit');
 $router->delete('/checklists/{checklistid}/items/{itemid}','ItemController@remove');
+
+#Login
+$router->post('/authenticate','UserController@authenticate');

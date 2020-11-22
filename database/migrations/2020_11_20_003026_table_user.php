@@ -16,8 +16,9 @@ class TableUser extends Migration
         Schema::create('user', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->string('name');
-            $table->string('password');
+            $table->string('username',50)->unique();
+            $table->string('password',255);
+            $table->string('api_token')->nullable();
         });
     }
 

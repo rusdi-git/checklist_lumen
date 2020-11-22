@@ -2,7 +2,6 @@
 
 use App\Models\Checklist;
 use Laravel\Lumen\Testing\DatabaseMigrations;
-use Laravel\Lumen\Testing\DatabaseTransactions;
 
 class ChecklistTest extends TestCase
 {

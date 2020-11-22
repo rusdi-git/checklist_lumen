@@ -40,6 +40,8 @@ class TableChecklist extends Migration
      */
     public function down()
     {
+        Schema::disableForeignKeyConstraints();
         Schema::dropIfExists('checklist');
+        Schema::enableForeignKeyConstraints();
     }
 }

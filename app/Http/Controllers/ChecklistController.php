@@ -67,6 +67,10 @@ class ChecklistController extends Controller {
     }
 
     public function edit($id, Request $request) {
+        $checklist = Checklist::find($id);
+        if(!$checklist) {
+            abort(404,'Not Found.');
+        }
         $data = $request->json()->get('data')['attributes'];
         $validator = Validator::make(
             $data,
@@ -86,8 +90,7 @@ class ChecklistController extends Controller {
                 $data['items'] = array_map('strval',$data['items']);
             }
         }
-
-        $checklist = Checklist::find($id);
+        
         $fields = ['object_domain','object_id','description','urgency','due','task_id'];
         foreach($data as $key=>$value) {
             if(in_array($key,$fields)) {
@@ -101,6 +104,9 @@ class ChecklistController extends Controller {
 
     public function remove($id) {
         $checklist = Checklist::find($id);
+        if(!$checklist) {
+            abort(404,'Not Found.');
+        }
         $checklist->delete();
         return $this->get_response(['result'=>'Checklist has been deleted'],204);
     }

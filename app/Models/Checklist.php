@@ -15,4 +15,9 @@ class Checklist extends Model {
         'is_completed','completed_at','task_id',
         'is_template'
     ];
+
+    public function items()
+    {
+        return $this->hasMany('App\Models\Item');
+    }
 }

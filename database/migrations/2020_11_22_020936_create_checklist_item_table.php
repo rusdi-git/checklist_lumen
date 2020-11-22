@@ -16,7 +16,7 @@ class CreateChecklistItemTable extends Migration
         Schema::create('item', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            $table->string('task_id',10);
+            $table->string('task_id',10)->nullable();
             $table->text('description');
             $table->dateTime('due')->nullable();
             $table->integer('urgency')->nullable();

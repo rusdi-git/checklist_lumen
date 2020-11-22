@@ -31,5 +31,8 @@ $router->get('/checklists/{checklistid}/items/{itemid}','ItemController@show');
 $router->patch('/checklists/{checklistid}/items/{itemid}','ItemController@edit');
 $router->delete('/checklists/{checklistid}/items/{itemid}','ItemController@remove');
 
+#Template
+$router->post('checklists/templates','ChecklistTemplateController@store');
+
 #Login
 $router->post('/authenticate','UserController@authenticate');

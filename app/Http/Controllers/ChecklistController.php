@@ -53,7 +53,6 @@ class ChecklistController extends Controller {
         $checklist->save();
 
         if(!empty($data['items'])) {
-            // $data['items'] = array_map('strval',$data['items']);
             foreach($data['items'] as $item) {
                 $checklist_item = new Item();
                 $checklist_item->checklist_id = $checklist->id;

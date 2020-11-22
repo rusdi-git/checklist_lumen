@@ -11,6 +11,11 @@ use App\Http\Transformers\ItemTransformer;
 
 class ItemController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+    
     public function index($checklistid)
     {
         $data = Item::where('checklist_id',$checklistid)->get();

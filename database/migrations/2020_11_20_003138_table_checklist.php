@@ -25,7 +25,7 @@ class TableChecklist extends Migration
             $table->text('description');
             $table->boolean('is_completed')->default(false);
             $table->dateTime('completed_at')->nullable();
-            $table->string('task_id',10);
+            $table->string('task_id',10)->nullable();
             $table->boolean('is_template')->default(false);
 
             // $table->foreign('created_by')->references('id')->on('user')->onDelete('set null');

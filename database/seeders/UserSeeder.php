@@ -17,11 +17,9 @@ class UserSeeder extends Seeder
     public function run()
     {
         $faker = Faker::create('id_ID');
-        for($i=0;$i<3;$i++) {
-            DB::table('user')->insert([
-                'username'=>$faker->unique()->userName,
-                'password'=>Hash::make('admin123'),
-            ]);
-        }
+        DB::table('user')->insert([
+            'username'=>'admin',
+            'password'=>Hash::make('admin123'),
+        ]);
     }
 }

@@ -34,6 +34,8 @@ class UserController extends Controller
         $user = User::where('username',$data['username'])->first();
         if($user && Hash::check($data['password'],$user->password)){
             $api_key = base64_encode(random_bytes(40));
+            $user->api_token = $api_key;
+            $user->save();
             return $this->get_response(['data'=>['api_key'=>$api_key]]);
         } else {
             $validator->getMessageBag()->add('username','Wrong Username or Password.');

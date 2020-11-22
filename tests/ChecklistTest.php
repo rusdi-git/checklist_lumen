@@ -13,7 +13,7 @@ class ChecklistTest extends TestCase
      */
     public function testCreateChecklist()
     {
-
+        $api_key = $this->generate_api();
         $this->json('POST','/checklists',['data'=>['attributes'=>[
             'object_domain'=>'contact',
             'object_id'=>'1',
@@ -21,7 +21,7 @@ class ChecklistTest extends TestCase
             'description'=>'Checklist Example',
             'due'=> '2019-01-25T07:50:14+00:00',
             'urgency'=> 1,
-        ]]])->seeJsonContains([
+        ]]],['Authorization'=>$api_key])->seeJsonContains([
             'task_id'=>'123',
             'is_completed'=>false
         ]);
@@ -29,8 +29,9 @@ class ChecklistTest extends TestCase
 
     public function testGetAllChecklist()
     {
+        $api_key = $this->generate_api();
         $checklist = Checklist::factory()->create();
-        $this->get('/checklists')->seeJsonContains([
+        $this->get('/checklists',['Authorization'=>$api_key])->seeJsonContains([
             'task_id'=>$checklist->task_id,
             'is_completed'=>false
         ]);
@@ -39,7 +40,8 @@ class ChecklistTest extends TestCase
     public function testGetSingleChecklist()
     {
         $checklist = Checklist::factory()->create();
-        $this->get('/checklists/'.$checklist->id)->seeJsonContains([
+        $api_key = $this->generate_api();
+        $this->get('/checklists/'.$checklist->id,['Authorization'=>$api_key])->seeJsonContains([
             'task_id'=>$checklist->task_id,
             'is_completed'=>false
         ]);
@@ -47,16 +49,18 @@ class ChecklistTest extends TestCase
 
     public function testUpdateChecklist()
     {
+        $api_key = $this->generate_api();
         $checklist = Checklist::factory()->create();
         $urgency = $checklist->urgency;
         $this->json('PATCH','/checklists/'.$checklist->id,[
             'data'=>['attributes'=>['urgency'=>$urgency+1]]
-            ])->seeJsonContains(['urgency'=>$urgency+1]);
+        ],['Authorization'=>$api_key])->seeJsonContains(['urgency'=>$urgency+1]);
     }
 
     public function testDeleteChecklist()
     {
         $checklist = Checklist::factory()->create();
-        $this->delete('/checklists/'.$checklist->id)->seeStatusCode(204);
+        $api_key = $this->generate_api();
+        $this->delete('/checklists/'.$checklist->id,[],['Authorization'=>$api_key])->seeStatusCode(204);
     }
 }

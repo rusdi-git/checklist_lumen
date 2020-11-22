@@ -34,7 +34,6 @@ class AuthServiceProvider extends ServiceProvider
             if ($request->header('Authorization')) {
                 $user = User::where('api_token', $request->header('Authorization'))->first();
                 if(!empty($user)){
-                    echo 'User Found';
                     return $user;
                 }
             }

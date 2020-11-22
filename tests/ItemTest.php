@@ -10,6 +10,7 @@ class ItemTest extends TestCase
 
     public function testCreateChecklistItem()
     {
+        $api_key = $this->generate_api();
         $checklist = Checklist::factory()->create();
         $this->json('POST','/checklists/'.$checklist->id.'/items',[
             'data'=>['attributes'=>[
@@ -17,7 +18,7 @@ class ItemTest extends TestCase
                 'due'=> '2019-01-25T07:50:14+00:00',
                 'urgency'=> 1,
                 'assignee_id'=>10,
-            ]]])->seeJsonContains([
+            ]]],['Authorization'=>$api_key])->seeJsonContains([
             'description'=>'Item Example',
             'is_completed'=>false,
             'task_id'=>$checklist->task_id
@@ -26,8 +27,9 @@ class ItemTest extends TestCase
 
     public function testGetChecklistItem()
     {
+        $api_key = $this->generate_api();
         $item = Item::factory()->create();
-        $this->get('/checklists/'.$item->checklist_id.'/items')
+        $this->get('/checklists/'.$item->checklist_id.'/items',['Authorization'=>$api_key])
         ->seeJsonContains([
             'description'=>$item->description,
             'task_id'=>$item->checklist->task_id
@@ -36,8 +38,9 @@ class ItemTest extends TestCase
 
     public function testGetSingleChecklistItem()
     {
+        $api_key = $this->generate_api();
         $item = Item::factory()->create();
-        $this->get('/checklists/'.$item->checklist_id.'/items/'.$item->id)
+        $this->get('/checklists/'.$item->checklist_id.'/items/'.$item->id,['Authorization'=>$api_key])
         ->seeJsonContains([
             'description'=>$item->description,
             'task_id'=>$item->checklist->task_id
@@ -46,18 +49,18 @@ class ItemTest extends TestCase
 
     public function testEditChecklistItem()
     {
+        $api_key = $this->generate_api();
         $item = Item::factory()->create();
         $assignee = $item->assignee_id;
-        echo $item->checklist_id;
-        echo $item->id;
         $this->json('PATCH','/checklists/'.$item->checklist_id.'/items/'.$item->id,[
             'data'=>['attributes'=>['assignee_id'=>$assignee+1]]
-            ])->seeJsonContains(['assignee_id'=>$assignee+1]);
+        ],['Authorization'=>$api_key])->seeJsonContains(['assignee_id'=>$assignee+1]);
     }
 
     public function testDeleteChecklistItem()
     {
+        $api_key = $this->generate_api();
         $item = Item::factory()->create();
-        $this->delete('/checklists/'.$item->checklist_id.'/items/'.$item->id)->seeStatusCode(204);
+        $this->delete('/checklists/'.$item->checklist_id.'/items/'.$item->id,[],['Authorization'=>$api_key])->seeStatusCode(204);
     }
 }

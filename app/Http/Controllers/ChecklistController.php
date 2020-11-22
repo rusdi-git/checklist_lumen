@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 use App\Models\Checklist;
+use App\Models\Item;
 use App\Http\Transformers\ChecklistTransformer;
 
 class ChecklistController extends Controller {
@@ -40,10 +41,6 @@ class ChecklistController extends Controller {
         );
         if($validator->fails()) {
             return $this->respondWithErrorMessage($validator);
-        } else {
-            if(!empty($data['items'])) {
-                $data['items'] = array_map('strval',$data['items']);
-            }
         }
 
         $checklist = new Checklist();
@@ -54,6 +51,19 @@ class ChecklistController extends Controller {
         $checklist->urgency = $data['urgency'];
         $checklist->task_id = $data['task_id'];
         $checklist->save();
+
+        if(!empty($data['items'])) {
+            // $data['items'] = array_map('strval',$data['items']);
+            foreach($data['items'] as $item) {
+                $checklist_item = new Item();
+                $checklist_item->checklist_id = $checklist->id;
+                $checklist_item->description = strval($item);
+                $checklist_item->due = $checklist->due;
+                $checklist_item->urgency = $checklist->urgency;
+                $checklist_item->task_id = $checklist->task_id;
+                $checklist_item->save();
+            }
+        }
 
         return $this->item($checklist,new ChecklistTransformer(),201);
     }

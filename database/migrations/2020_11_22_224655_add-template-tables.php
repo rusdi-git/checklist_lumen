@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddTemplateName extends Migration
+class AddTemplateTables extends Migration
 {
     /**
      * Run the migrations.
@@ -13,14 +13,21 @@ class AddTemplateName extends Migration
      */
     public function up()
     {
-        Schema::table('checklist',function (Blueprint $table) {
-            $table->string('template_name',150)->nullable();
+        Schema::create('template', function (Blueprint $table) {
+            $table->id();
+            $table->string('name',150)->nullable();
+            $table->text('description');
             $table->integer('due_interval')->nullable();
             $table->string('due_unit',10)->nullable();
         });
-        Schema::table('item',function (Blueprint $table) {
+
+        Schema::create('template_item',function (Blueprint $table){
+            $table->id();
+            $table->foreignId('template_id')->constrained('template')->onDelete('cascade');
+            $table->text('description');
             $table->integer('due_interval')->nullable();
             $table->string('due_unit',10)->nullable();
+            $table->integer('urgency')->nullable();
         });
     }
 
@@ -31,11 +38,7 @@ class AddTemplateName extends Migration
      */
     public function down()
     {
-        Schema::table('checklist',function (Blueprint $table) {
-            $table->dropColumn(['template_name','due_interval','due_unit']);
-        });
-        Schema::table('item',function (Blueprint $table) {
-            $table->dropColumn(['due_interval','due_unit']);
-        });
+        Schema::dropIfExists('template_item');
+        Schema::dropIfExists('template');
     }
 }

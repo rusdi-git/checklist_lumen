@@ -20,19 +20,23 @@ $router->get('/', function () use ($router) {
 #Checklist
 $router->get('/checklists','ChecklistController@index');
 $router->post('/checklists','ChecklistController@store');
-$router->get('/checklists/{id}','ChecklistController@show');
-$router->patch('/checklists/{id}','ChecklistController@edit');
-$router->delete('/checklists/{id}','ChecklistController@remove');
+$router->get('/checklists/{id:[0-9]+}','ChecklistController@show');
+$router->patch('/checklists/{id:[0-9]+}','ChecklistController@edit');
+$router->delete('/checklists/{id:[0-9]+}','ChecklistController@remove');
 
 #Checklist Item
-$router->get('/checklists/{checklistid}/items','ItemController@index');
-$router->post('/checklists/{checklistid}/items','ItemController@store');
-$router->get('/checklists/{checklistid}/items/{itemid}','ItemController@show');
-$router->patch('/checklists/{checklistid}/items/{itemid}','ItemController@edit');
-$router->delete('/checklists/{checklistid}/items/{itemid}','ItemController@remove');
+$router->get('/checklists/{checklistid:[0-9]+}/items','ItemController@index');
+$router->post('/checklists/{checklistid:[0-9]+}/items','ItemController@store');
+$router->get('/checklists/{checklistid:[0-9]+}/items/{itemid:[0-9]+}','ItemController@show');
+$router->patch('/checklists/{checklistid:[0-9]+}/items/{itemid:[0-9]+}','ItemController@edit');
+$router->delete('/checklists/{checklistid:[0-9]+}/items/{itemid:[0-9]+}','ItemController@remove');
 
 #Template
-$router->post('checklists/templates','ChecklistTemplateController@store');
+$router->get('/checklists/templates','TemplateController@index');
+$router->post('/checklists/templates','TemplateController@store');
+$router->get('/checklists/templates/{templateid:[0-9]+}','TemplateController@show');
+$router->patch('/checklists/templates/{templateid:[0-9]+}','TemplateController@edit');
+$router->delete('/checklists/templates/{templateid:[0-9]+}','TemplateController@remove');
 
 #Login
 $router->post('/authenticate','UserController@authenticate');

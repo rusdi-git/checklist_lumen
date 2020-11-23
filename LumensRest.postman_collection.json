@@ -32,7 +32,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"data\":{\n        \"username\":\"anom16\",\n        \"password\":\"admin123\"\n    }\n}",
+					"raw": "{\n    \"data\":{\n        \"username\":\"admin\",\n        \"password\":\"admin123\"\n    }\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -46,6 +46,252 @@
 					],
 					"path": [
 						"authenticate"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ChecklistTemplatePost",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "d7c6ddb7-c7be-4b76-b815-047235e2eb47",
+						"exec": [
+							"pm.test(\"Status code is 201\", function () {",
+							"    pm.response.to.have.status(201);",
+							"});",
+							"",
+							"pm.test(\"Success Create Template\", function () {",
+							"    var jsonData = pm.response.json().data;",
+							"    pm.expect(jsonData).has.property('attributes');",
+							"    pm.expect(jsonData).has.property('links');",
+							"    pm.expect(jsonData.attributes.name).to.eql('foo template');",
+							"    pm.expect(jsonData.attributes.checklist.description).to.eql('my checklist');",
+							"    pm.expect(jsonData.attributes.items[0].description).to.eql('my foo item');",
+							"    pm.collectionVariables.set('template_id',jsonData.id);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "apikey",
+					"apikey": [
+						{
+							"key": "value",
+							"value": "{{api_key}}",
+							"type": "string"
+						},
+						{
+							"key": "key",
+							"value": "Authorization",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"data\": {\n    \"attributes\": {\n      \"name\": \"foo template\",\n      \"checklist\": {\n        \"description\": \"my checklist\",\n        \"due_interval\": 3,\n        \"due_unit\": \"hour\"\n      },\n      \"items\": [\n        {\n          \"description\": \"my foo item\",\n          \"urgency\": 2,\n          \"due_interval\": 40,\n          \"due_unit\": \"minute\"\n        },\n        {\n          \"description\": \"my bar item\",\n          \"urgency\": 3,\n          \"due_interval\": 30,\n          \"due_unit\": \"minute\"\n        }\n      ]\n    }\n  }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/checklists/templates",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"checklists",
+						"templates"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ChecklistTemplate Get",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "be4d09fd-91fc-495c-a25a-ac277dea041b",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Success Get Templates\", function () {",
+							"    var jsonData = pm.response.json().data;",
+							"    var latestData = jsonData[jsonData.length-1];",
+							"    pm.expect(latestData).has.property('attributes');",
+							"    pm.expect(latestData).has.property('links');",
+							"    pm.expect(latestData.attributes.name).to.eql('foo template');",
+							"    pm.expect(latestData.attributes.checklist.description).to.eql('my checklist');",
+							"    pm.expect(latestData.attributes.items[0].description).to.eql('my foo item');",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "apikey",
+					"apikey": [
+						{
+							"key": "value",
+							"value": "{{api_key}}",
+							"type": "string"
+						},
+						{
+							"key": "key",
+							"value": "Authorization",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/checklists/templates",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"checklists",
+						"templates"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ChecklistTemplate GetOne",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "e8436002-2d0f-4f7a-95d3-1ca0766bac0b",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Success Get Template\", function () {",
+							"    var jsonData = pm.response.json().data;",
+							"    pm.expect(jsonData).has.property('attributes');",
+							"    pm.expect(jsonData).has.property('links');",
+							"    pm.expect(jsonData.attributes.name).to.eql('foo template');",
+							"    pm.expect(jsonData.attributes.checklist.description).to.eql('my checklist');",
+							"    pm.expect(jsonData.attributes.items[0].description).to.eql('my foo item');",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "apikey",
+					"apikey": [
+						{
+							"key": "value",
+							"value": "{{api_key}}",
+							"type": "string"
+						},
+						{
+							"key": "key",
+							"value": "Authorization",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/checklists/templates/{{template_id}}",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"checklists",
+						"templates",
+						"{{template_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ChecklistTemplate Patch",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "a4ba2c42-66e0-49d8-993c-cd0072dde99f",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Success Edit Template\", function () {",
+							"    var jsonData = pm.response.json().data;",
+							"    pm.expect(jsonData).has.property('attributes');",
+							"    pm.expect(jsonData.attributes.name).to.eql('edited template');",
+							"    pm.expect(jsonData.attributes.checklist.description).to.eql('edited checklist');",
+							"    pm.expect(jsonData.attributes.checklist.due_interval).to.eql(4);",
+							"    pm.collectionVariables.set('template_id',jsonData.id);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "apikey",
+					"apikey": [
+						{
+							"key": "value",
+							"value": "{{api_key}}",
+							"type": "string"
+						},
+						{
+							"key": "key",
+							"value": "Authorization",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"data\": {\n    \"attributes\": {\n      \"name\": \"edited template\",\n      \"checklist\": {\n        \"description\": \"edited checklist\",\n        \"due_interval\": 4\n      }\n    }\n  }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/checklists/templates/{{template_id}}",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"checklists",
+						"templates",
+						"{{template_id}}"
 					]
 				}
 			},
@@ -512,6 +758,54 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "ChecklistTemplate Delete",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "c5e5bdaa-b7f5-4139-a517-a51cbf22aa3f",
+						"exec": [
+							"pm.test(\"Status code is 204\", function () {",
+							"    pm.response.to.have.status(204);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "apikey",
+					"apikey": [
+						{
+							"key": "value",
+							"value": "{{api_key}}",
+							"type": "string"
+						},
+						{
+							"key": "key",
+							"value": "Authorization",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/checklists/templates/{{template_id}}",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"checklists",
+						"templates",
+						"{{template_id}}"
+					]
+				}
+			},
+			"response": []
 		}
 	],
 	"event": [
@@ -538,23 +832,28 @@
 	],
 	"variable": [
 		{
-			"id": "f416afc0-71d8-4e62-bc5f-17d73c639c14",
+			"id": "556e8754-5ac9-4a4f-a1b6-3529e363e8cb",
 			"key": "url",
 			"value": "localhost:8000"
 		},
 		{
-			"id": "fd830fee-508d-42dc-829a-f020cfe26980",
+			"id": "56dbe8a5-7554-44e9-9507-c5e0ca0d7c30",
 			"key": "checklist_id",
 			"value": ""
 		},
 		{
-			"id": "35eb2ec4-7ebc-4a68-a261-7ffe2e0554c5",
+			"id": "d003256b-4304-46e9-a80c-79018e408622",
 			"key": "item_id",
 			"value": ""
 		},
 		{
-			"id": "e1312b16-2d0d-4766-b39b-ec92a2762ba4",
+			"id": "c898b82a-7846-4f35-a3af-bc2f5a40970c",
 			"key": "api_key",
+			"value": ""
+		},
+		{
+			"id": "c7bbacbd-c1a9-4fe2-a92e-b12a9581ef8d",
+			"key": "template_id",
 			"value": ""
 		}
 	],

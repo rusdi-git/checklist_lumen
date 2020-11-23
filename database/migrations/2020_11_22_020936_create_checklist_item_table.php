@@ -23,9 +23,12 @@ class CreateChecklistItemTable extends Migration
             $table->boolean('is_completed')->default(false);
             $table->dateTime('completed_at')->nullable();
             $table->foreignId('checklist_id')->constrained('checklist')->onDelete('cascade');
-            $table->integer('created_by')->nullable();
-            $table->integer('updated_by')->nullable();
+            $table->unsignedBigInteger('created_by')->nullable();
+            $table->unsignedBigInteger('updated_by')->nullable();
             $table->integer('assignee_id')->nullable();
+
+            $table->foreign('created_by')->references('id')->on('user')->onDelete('set null');
+            $table->foreign('updated_by')->references('id')->on('user')->onDelete('set null');
         });
     }
 
@@ -36,6 +39,6 @@ class CreateChecklistItemTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('checklist_item');
+        Schema::dropIfExists('item');
     }
 }

@@ -22,9 +22,6 @@ class ChecklistTransformer  extends Transformer
             'created_at'=>$post->created_at,
             'updated_by'=>$post->updated_by,
             'created_by'=>$post->created_by,
-            'links' => [
-                'self' => '/checklist/'.$post->id,
-            ],
         ];
     }
 }

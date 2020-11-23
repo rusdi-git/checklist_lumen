@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 use App\Models\Item;
@@ -24,6 +25,7 @@ class ItemController extends Controller
 
     public function store($checklistid, Request $request)
     {
+        $user = Auth::user();
         $checklist = Checklist::find($checklistid);
         if(!$checklist) {
             abort(404,'Not Found');
@@ -48,6 +50,8 @@ class ItemController extends Controller
         $item->assignee_id = $data['assignee_id'];
         $item->checklist_id = $checklist->id;
         $item->task_id = $checklist->task_id;
+        $item->created_by = $user->id;
+        $item->updated_by = $user->id;
         $item->save();
 
         return $this->item($item,new ItemTransformer(),201);
@@ -65,6 +69,7 @@ class ItemController extends Controller
 
     public function edit($checklistid,$itemid, Request $request)
     {
+        $user = Auth::user();
         $item = Item::where(['checklist_id'=>$checklistid,'id'=>$itemid])->first();
         if(!$item)
         {
@@ -90,6 +95,7 @@ class ItemController extends Controller
                 $item->$key = $value;
             }
         }
+        $item->updated_by = $user->id;
         $item->update();
         return $this->item($item,new ItemTransformer());
     }

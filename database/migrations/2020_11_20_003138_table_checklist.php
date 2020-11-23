@@ -26,10 +26,9 @@ class TableChecklist extends Migration
             $table->boolean('is_completed')->default(false);
             $table->dateTime('completed_at')->nullable();
             $table->string('task_id',10)->nullable();
-            $table->boolean('is_template')->default(false);
 
-            // $table->foreign('created_by')->references('id')->on('user')->onDelete('set null');
-            // $table->foreign('updated_by')->references('id')->on('user')->onDelete('set null');
+            $table->foreign('created_by')->references('id')->on('user')->onDelete('set null');
+            $table->foreign('updated_by')->references('id')->on('user')->onDelete('set null');
         });
     }
 
@@ -40,8 +39,6 @@ class TableChecklist extends Migration
      */
     public function down()
     {
-        Schema::disableForeignKeyConstraints();
         Schema::dropIfExists('checklist');
-        Schema::enableForeignKeyConstraints();
     }
 }

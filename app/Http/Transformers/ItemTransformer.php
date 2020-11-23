@@ -21,9 +21,6 @@ class ItemTransformer  extends Transformer
             'updated_by'=>$post->updated_by,
             'created_by'=>$post->created_by,
             'assignee_id'=>$post->assignee_id,
-            'links' => [
-                'self' => '/checklist/'.$post->id,
-            ],
         ];
     }
 }

@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 use App\Models\Checklist;
@@ -28,6 +30,7 @@ class ChecklistController extends Controller {
 
     public function store(Request $request) {
         $data = $request->json()->get('data')['attributes'];
+        $user = Auth::user();
         $validator = Validator::make(
             $data,
             [
@@ -50,33 +53,43 @@ class ChecklistController extends Controller {
         $checklist->due = $data['due'];
         $checklist->urgency = $data['urgency'];
         $checklist->task_id = $data['task_id'];
+        $checklist->created_by = $user->id;
+        $checklist->updated_by = $user->id;
         $checklist->save();
 
         if(!empty($data['items'])) {
+            $inserted_item = array();
+            $created_at = Carbon::now();
             foreach($data['items'] as $item) {
-                $checklist_item = new Item();
-                $checklist_item->checklist_id = $checklist->id;
-                $checklist_item->description = strval($item);
-                $checklist_item->due = $checklist->due;
-                $checklist_item->urgency = $checklist->urgency;
-                $checklist_item->task_id = $checklist->task_id;
-                $checklist_item->save();
+                $inserted_item[] = [
+                    'checklist_id'=>$checklist->id,
+                    'description'=>strval($item),
+                    'due'=>$checklist->due,
+                    'urgency'=>$checklist->urgency,
+                    'task_id'=>$checklist->task_id,
+                    'created_at'=>$created_at,
+                    'created_by'=>$user->id,
+                    'updated_at'=>$created_at,
+                    'updated_by'=>$user->id,
+                ];
             }
+            Item::insert($inserted_item);
         }
 
         return $this->item($checklist,new ChecklistTransformer(),201);
     }
 
     public function show($id) {
-        $data = Checklist::find($id);
-        if(!$data) {
+        $checklist = Checklist::find($id);
+        if(!$checklist) {
             abort(404,'Checklist not found.');
         }
-        return $this->item($data,new ChecklistTransformer());
+        return $this->item($checklist,new ChecklistTransformer());
     }
 
     public function edit($id, Request $request) {
         $checklist = Checklist::find($id);
+        $user = Auth::user();
         if(!$checklist) {
             abort(404,'Not Found.');
         }
@@ -94,10 +107,6 @@ class ChecklistController extends Controller {
         );
         if($validator->fails()) {
             return $this->respondWithErrorMessage($validator);
-        } else {
-            if(!empty($data['items'])) {
-                $data['items'] = array_map('strval',$data['items']);
-            }
         }
         
         $fields = ['object_domain','object_id','description','urgency','due','task_id'];
@@ -106,6 +115,7 @@ class ChecklistController extends Controller {
                 $checklist->$key = $value;
             }
         }
+        $checklist->updated_by = $user->id;
         $checklist->update();
 
         return $this->item($checklist,new ChecklistTransformer());

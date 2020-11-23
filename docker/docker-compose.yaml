@@ -2,7 +2,7 @@ version: '3.7'
 services:
   mysqldb:
     image: mysql:latest
-    restart: always
+    restart: unless-stopped
     environment:
       MYSQL_DATABASE: 'lumen_db'
       # So you don't have to use root, but you can if you like

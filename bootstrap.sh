@@ -1,6 +1,6 @@
-#!/bin/sh -e
+#!/bin/sh
 
-docker-compose --project-name checklist-lumen --file docker/docker-compose.yaml up --detach
+docker-compose --project-name checklist-lumen --file docker/docker-compose.yaml up --build -d
 
 cp .env.example .env
 

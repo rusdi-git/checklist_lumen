@@ -30,6 +30,8 @@ $router->post('/checklists/{checklistid:[0-9]+}/items','ItemController@store');
 $router->get('/checklists/{checklistid:[0-9]+}/items/{itemid:[0-9]+}','ItemController@show');
 $router->patch('/checklists/{checklistid:[0-9]+}/items/{itemid:[0-9]+}','ItemController@edit');
 $router->delete('/checklists/{checklistid:[0-9]+}/items/{itemid:[0-9]+}','ItemController@remove');
+$router->get('/checklists/complete','ItemController@get_complete');
+$router->get('/checklist/incomplete','ItemController@get_incomplete');
 
 #Template
 $router->get('/checklists/templates','TemplateController@index');
@@ -37,6 +39,7 @@ $router->post('/checklists/templates','TemplateController@store');
 $router->get('/checklists/templates/{templateid:[0-9]+}','TemplateController@show');
 $router->patch('/checklists/templates/{templateid:[0-9]+}','TemplateController@edit');
 $router->delete('/checklists/templates/{templateid:[0-9]+}','TemplateController@remove');
+$router->post('/checklists/templates/{templateid:[0-9]+}/assigns','TemplateController@assign');
 
 #Login
 $router->post('/authenticate','UserController@authenticate');

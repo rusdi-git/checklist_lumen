@@ -109,4 +109,22 @@ class ItemController extends Controller
         $item->delete();
         return $this->get_response(['result'=>'Item has been deleted'],204);
     }
+
+    public function get_complete() {
+        $items = Item::where('is_complete',true)->get();
+        $result = array();
+        foreach($items as $item) {
+            $result[] = ['item_id'=>$item->id];
+        }
+        return $this->get_response($result);
+    }
+
+    public function get_incomplete() {
+        $items = Item::where('is_complete',false)->get();
+        $result = array();
+        foreach($items as $item) {
+            $result[] = ['item_id'=>$item->id];
+        }
+        return $this->get_response($result);
+    }
 }

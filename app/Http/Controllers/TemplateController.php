@@ -2,12 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\CarbonImmutable;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 
 use App\Models\Template;
 use App\Models\TemplateItem;
+use App\Models\Checklist;
+use App\Models\Item;
+use App\Http\Resources\Template as TemplateResource;
+use App\Http\Resources\TemplateSingle as TemplateSingleResource;
 use App\Http\Transformers\TemplateTransformer;
 
 class TemplateController extends Controller
@@ -17,9 +22,10 @@ class TemplateController extends Controller
         $this->middleware('auth');
     }
 
-    public function index() {
-        $data = Template::all();
-        return $this->collection($data,new TemplateTransformer());
+    public function index(Request $request) {
+        // $query = $request->query();
+        $data = Template::with('items');
+        return TemplateResource::collection($data->paginate());
     }
 
     public function store(Request $request) {
@@ -64,15 +70,15 @@ class TemplateController extends Controller
             }
             TemplateItem::insert($inserted_item);
         }
-        return $this->item($template,new TemplateTransformer(),201);
+        return $this->get_response(new TemplateSingleResource(Template::with('items')->find($template->id)),201);
     }
 
     public function show($templateid) {
-        $template = Template::find($templateid);
+        $template = Template::with('items')->find($templateid);
         if(!$template) {
             abort(404,'Not found.');
         }
-        return $this->item($template,new TemplateTransformer());
+        return $this->get_response(new TemplateSingleResource($template));
     }
 
     public function edit($templateid, Request $request) {
@@ -115,7 +121,7 @@ class TemplateController extends Controller
         }
         $template->update();
 
-        return $this->item($template,new TemplateTransformer());
+        return $this->get_response(new TemplateSingleResource(Template::with('items')->find($template->id)));
     }
 
     public function remove($templateid) {
@@ -125,5 +131,46 @@ class TemplateController extends Controller
         }
         $template->delete();
         return $this->get_response(['result'=>'Template has been deleted'],204);
+    }
+
+    public function assign($templateid, Request $request) {
+        $data = $request->json()->get();
+        $validator = Validator::make(
+            $data,
+            [
+                'data.*.attributes.object_id'=>'string|required',
+                'data.*.attributes.object_domain'=>'string|required',
+            ]
+        );
+        if($validator->fails()) {
+            return $this->respondWithErrorMessage($validator);
+        }
+        $template = Template::with('items')->find($templateid);
+        if(!$template) {
+            abort(404,'Not found.');
+        }
+        $now = CarbonImmutable::now();
+        $due_date = $now->add($template->due_interval,$template->due_unit);
+        foreach($data as $item) {
+            $checklist = new Checklist();
+            $checklist->object_domain = $item['attributes']['object_domain'];
+            $checklist->object_id = $item['attributes']['object_id'];
+            $checklist->description = $template->description;
+            $checklist->due = $due_date;
+            $checklist->save();
+            foreach($template->items as $i) {                
+                $checklist_item = new Item();
+                $checklist_item->checklist_id = $checklist->id;
+                $checklist_item->description = $i->description;
+                $checklist_item->urgency = $i->urgency;
+                if($i->due_interval&&$i->due_unit) {
+                    $now = CarbonImmutable::now();
+                    $due_date = $now->add($i->due_interval,$i->due_unit);
+                    $checklist_item->due_date = $due_date;
+                }
+                $checklist_item->save();
+            }
+        }
+        return $this->get_response(['result'=>'Assignment Success'],201);
     }
 }
